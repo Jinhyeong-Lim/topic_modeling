@@ -133,7 +133,6 @@ def test_tm(model, category):
     # Returns
         topics :  topic prediction for each documents
         probs : the topic probability distribution
-
     """
 
     # Load data
