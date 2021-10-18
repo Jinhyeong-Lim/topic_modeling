@@ -1,10 +1,24 @@
 from bertopic import BERTopic
+import random
 from sklearn.datasets import fetch_20newsgroups
+import torch
 from umap import UMAP
 import hdbscan
 from sklearn.feature_extraction.text import CountVectorizer
+import numpy as np
 from collections import defaultdict
+from typing import Dict, List, Tuple, Union
 from sklearn.metrics.pairwise import cosine_similarity
+from scipy.spatial import distance
+from metrics import pmi
+from flair.embeddings import TransformerDocumentEmbeddings
+
+# Experiments Setup, Load BERTopic Model
+seed_val = 42
+np.random.seed(seed_val)
+random.seed(seed_val)
+torch.manual_seed(seed_val)
+torch.cuda.manual_seed_all(seed_val)
 
 
 def make_bertopic_model():
@@ -43,7 +57,7 @@ task4 = ['talk.politics.guns', 'talk.politics.mideast', 'talk.politics.misc',
          'talk.religion.misc']
 
 
-def store_documents(category, model):
+def store_documents(category: List[str], model: BERTopic) -> List[str]:
     """ Save twenty representative documents for topics
 
     # Arguments:
@@ -89,7 +103,7 @@ def store_documents(category, model):
     return store_doc
 
 
-def train_tm(model, category, store_doc: None):
+def train_tm(model: BERTopic, category: List[str], store_doc: None) -> BERTopic:
     """ Fit the models (Bert, UMAP and HDBSCAN) on a collection of documents
     and  generate topics
 
@@ -123,7 +137,7 @@ def train_tm(model, category, store_doc: None):
     return topic_model
 
 
-def test_tm(model, category):
+def test_tm(model: BERTopic, category: List[str]) -> Union[List[str], List[str]]:
     """ After having fit a model, use transform to predict new instances
 
     # Arguments:
@@ -133,6 +147,7 @@ def test_tm(model, category):
     # Returns
         topics :  topic prediction for each documents
         probs : the topic probability distribution
+
     """
 
     # Load data
@@ -145,4 +160,10 @@ def test_tm(model, category):
     topics, probs = model.transform(docs)
 
     return topics, probs
+
+
+
+
+
+
 
